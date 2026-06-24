@@ -33,11 +33,12 @@ const gridSize = 20;
 const tileCount = canvas.width / gridSize;
 
 let snake = [];
-let velocity = { x: 0, y: 0 };
+let velocity = { x: 1, y: 0 };
 let food = { x: 10, y: 10 };
 let bonusFood = null;
 let score = 0;
 let currentSpeed = 130; 
+let changingDirection = false;
 let isPaused = false;
 let regularFoodEaten = 0;
 let gameLoopId;
@@ -199,7 +200,7 @@ document.getElementById("back-home-btn").addEventListener("click", () => {
 });
 function resetGame() {
     snake = [{ x: 10, y: 10 }];
-    velocity = { x: 0, y: 0 };
+    velocity = { x: 1, y: 0 };
     score = 0;
     regularFoodEaten = 0;
     bonusFood = null;
@@ -220,6 +221,7 @@ function gameLoop() {
 }
 
 function update() {
+    changingDirection = false; // <--- أضف هذا السطر هنا
     if (velocity.x === 0 && velocity.y === 0) return;
     let head = { x: snake[0].x + velocity.x, y: snake[0].y + velocity.y };
 
