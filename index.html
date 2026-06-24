@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبة الثعبان الكلاسيكية</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+
+        <div id="home-screen" class="screen">
+            <h1>Snake Game 🐍</h1>
+
+            <h3 id="welcome-msg" class="hidden" style="color: #00ff88; margin-bottom: 15px;">
+                مرحباً، <span id="user-email-display"></span>
+            </h3>
+
+            <button id="play-btn">
+                ابدأ اللعب
+            </button>
+
+            <button
+                id="auth-toggle-btn"
+                class="secondary-btn"
+                style="margin-top:10px;">
+                تسجيل الدخول
+            </button>
+
+            <div id="leaderboard-start" class="leaderboard">
+                <h3>العشرة الأوائل 🏆</h3>
+                <ul id="top-scores-list"></ul>
+            </div>
+        </div>
+
+        <div id="auth-screen" class="screen hidden">
+         <button id="back-arrow-btn" class="back-arrow" title="العودة للرئيسية">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7"/> </svg>
+            </button>
+            <h1>Snake Game 🐍</h1>
+
+            <div id="login-section" style="width:100%;">
+                <h2>تسجيل الدخول</h2>
+                <input type="email" id="email-login" placeholder="البريد الإلكتروني" autocomplete="off">
+                <input type="password" id="password-login" placeholder="كلمة المرور">
+
+                <div class="auth-buttons">
+                    <button id="login-btn">دخول</button>
+                    <button id="show-signup-btn" class="secondary-btn">إنشاء حساب جديد</button>
+                </div>
+
+                <button id="forgot-password-btn" class="text-btn">نسيت كلمة المرور؟</button>
+            </div>
+
+            <div id="signup-section" class="hidden" style="width:100%;">
+                <h2>إنشاء حساب</h2>
+                <input type="text" id="first-name" placeholder="الاسم الأول" autocomplete="off">
+                <input type="text" id="last-name" placeholder="الاسم الأخير" autocomplete="off">
+                <input type="email" id="email-signup" placeholder="البريد الإلكتروني" autocomplete="off">
+                <input type="password" id="password-signup" placeholder="كلمة المرور">
+
+                <div class="auth-buttons">
+                    <button id="signup-btn">إنشاء الحساب</button>
+                    <button id="show-login-btn" class="secondary-btn">رجوع للدخول</button>
+                </div>
+            </div>
+
+            <p id="auth-msg" class="msg-text"></p>
+
+        </div>
+
+      <div id="game-screen" class="screen hidden" style="position: relative;">
+
+            <div class="score-board">
+                <span>
+                    points: <span id="score">0</span>
+                </span>
+                <button id="pause-btn" class="pause-btn">⏸️ إيقاف</button>
+            </div>
+
+            <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+            <div id="pause-overlay" class="pause-overlay hidden">
+                <h2>تم إيقاف اللعبة</h2>
+                <button id="resume-btn">▶️ استئناف اللعب</button>
+            </div>
+
+        </div>
+
+        <div id="game-over-screen" class="screen hidden">
+
+            <h2>انتهت اللعبة! 💀</h2>
+
+            <p>لقد أكلت نفسك!</p>
+
+            <p>
+                النقاط النهائية:
+                <span id="final-score">0</span>
+            </p>
+
+            <button id="restart-btn">
+                العب مرة أخرى
+            </button>
+
+            <button id="back-home-btn" class="secondary-btn" style="margin-top:10px;">
+                العودة للرئيسية
+            </button>
+
+        </div>
+
+    </div>
+
+    <script type="module" src="app.js"></script>
+
+</body>
+</html>
