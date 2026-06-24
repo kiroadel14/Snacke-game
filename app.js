@@ -29,7 +29,7 @@ const auth = getAuth(app);
 // --- 2. متغيرات اللعبة و UI ---
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
-const gridSize = 20;
+const gridSize = 25;
 const tileCount = canvas.width / gridSize;
 
 let snake = [];
