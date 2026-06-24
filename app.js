@@ -304,7 +304,7 @@ function draw() {
         let radius = gridSize / 2 - 1; 
 
         if (i === 0) {
-            ctx.fillStyle = "#0089b3"; 
+            ctx.fillStyle = "#00b3b3"; 
             ctx.beginPath();
             ctx.arc(x, y, radius + 2, 0, 2 * Math.PI); 
             ctx.fill();
@@ -335,7 +335,7 @@ function draw() {
             ctx.beginPath(); ctx.arc(x + offset2.x + (velocity.x * 1), y + offset2.y + (velocity.y * 1), pupilRadius, 0, 2 * Math.PI); ctx.fill();
 
         } else {
-            ctx.fillStyle = "#0089b3"; 
+            ctx.fillStyle = "#00b3b3"; 
             ctx.beginPath();
             ctx.arc(x, y, radius, 0, 2 * Math.PI);
             ctx.fill();
@@ -456,5 +456,61 @@ async function fetchLeaderboard() {
     } catch (e) {
         console.error("Error fetching leaderboard: ", e);
         listElement.innerHTML = "<li>حدث خطأ في جلب النتائج</li>";
+    }
+}
+// --- 6. نظام التحكم للموبايل (Swipe Controls) ---
+let touchStartX = 0;
+let touchStartY = 0;
+
+// تسجيل مكان لمس الشاشة لأول مرة
+canvas.addEventListener("touchstart", function(e) {
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+    
+    // منع حركة الشاشة الافتراضية إذا كانت اللعبة شغالة
+    if (!isPaused) {
+        e.preventDefault(); 
+    }
+}, { passive: false });
+
+// منع السكرول أثناء السحب
+canvas.addEventListener("touchmove", function(e) {
+    if (!isPaused) {
+        e.preventDefault();
+    }
+}, { passive: false });
+
+// تحديد الاتجاه عند رفع الأصبع من على الشاشة
+canvas.addEventListener("touchend", function(e) {
+    if (isPaused) return; // لا تفعل شيئاً إذا كانت اللعبة متوقفة
+
+    let touchEndX = e.changedTouches[0].screenX;
+    let touchEndY = e.changedTouches[0].screenY;
+
+    handleSwipe(touchStartX, touchStartY, touchEndX, touchEndY);
+});
+
+function handleSwipe(startX, startY, endX, endY) {
+    let diffX = endX - startX;
+    let diffY = endY - startY;
+
+    // التأكد من أن السحبة طويلة بما يكفي (لتجاهل اللمسات الخاطئة)
+    if (Math.abs(diffX) < 30 && Math.abs(diffY) < 30) return;
+
+    // تحديد هل السحبة أفقية أم عمودية (أيهما أطول)
+    if (Math.abs(diffX) > Math.abs(diffY)) {
+        // سحب أفقي (يمين أو يسار)
+        if (diffX > 0 && velocity.x !== -1) { 
+            velocity = { x: 1, y: 0 }; // يمين
+        } else if (diffX < 0 && velocity.x !== 1) { 
+            velocity = { x: -1, y: 0 }; // يسار
+        }
+    } else {
+        // سحب عمودي (فوق أو تحت)
+        if (diffY > 0 && velocity.y !== -1) { 
+            velocity = { x: 0, y: 1 }; // تحت
+        } else if (diffY < 0 && velocity.y !== 1) { 
+            velocity = { x: 0, y: -1 }; // فوق
+        }
     }
 }
