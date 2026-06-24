@@ -37,7 +37,7 @@ let velocity = { x: 0, y: 0 };
 let food = { x: 10, y: 10 };
 let bonusFood = null;
 let score = 0;
-let currentSpeed = 120; 
+let currentSpeed = 130; 
 let isPaused = false;
 let regularFoodEaten = 0;
 let gameLoopId;
@@ -205,7 +205,7 @@ function resetGame() {
     bonusFood = null;
     document.getElementById("score").textContent = score;
     placeFood();
-    currentSpeed = 120; 
+    currentSpeed = 130; 
     if (gameLoopId) clearInterval(gameLoopId);
     gameLoopId = setInterval(gameLoop, currentSpeed);
     isPaused = false;
@@ -250,8 +250,8 @@ function update() {
         }
 
         // زيادة السرعة
-        if (regularFoodEaten % 3 === 0 && currentSpeed > 50) { 
-            currentSpeed -= 5; 
+        if (regularFoodEaten % 3 === 0 && currentSpeed > 70) { 
+            currentSpeed -= 4; 
             clearInterval(gameLoopId);
             gameLoopId = setInterval(gameLoop, currentSpeed);
         }
@@ -491,26 +491,27 @@ canvas.addEventListener("touchend", function(e) {
 });
 
 function handleSwipe(startX, startY, endX, endY) {
+    if (changingDirection) return; // منع تغيير الاتجاه مرتين في نفس اللحظة
+
     let diffX = endX - startX;
     let diffY = endY - startY;
 
-    // التأكد من أن السحبة طويلة بما يكفي (لتجاهل اللمسات الخاطئة)
-    if (Math.abs(diffX) < 30 && Math.abs(diffY) < 30) return;
+    // قللنا الرقم من 30 لـ 15 عشان اللمس يكون حساس وسريع جداً
+    if (Math.abs(diffX) < 15 && Math.abs(diffY) < 15) return;
 
-    // تحديد هل السحبة أفقية أم عمودية (أيهما أطول)
     if (Math.abs(diffX) > Math.abs(diffY)) {
         // سحب أفقي (يمين أو يسار)
         if (diffX > 0 && velocity.x !== -1) { 
-            velocity = { x: 1, y: 0 }; // يمين
+            velocity = { x: 1, y: 0 }; changingDirection = true;
         } else if (diffX < 0 && velocity.x !== 1) { 
-            velocity = { x: -1, y: 0 }; // يسار
+            velocity = { x: -1, y: 0 }; changingDirection = true;
         }
     } else {
         // سحب عمودي (فوق أو تحت)
         if (diffY > 0 && velocity.y !== -1) { 
-            velocity = { x: 0, y: 1 }; // تحت
+            velocity = { x: 0, y: 1 }; changingDirection = true;
         } else if (diffY < 0 && velocity.y !== 1) { 
-            velocity = { x: 0, y: -1 }; // فوق
+            velocity = { x: 0, y: -1 }; changingDirection = true;
         }
     }
 }

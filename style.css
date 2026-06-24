@@ -16,13 +16,14 @@ body {
 }
 
 .container {
-    position: relative; /* تم الإضافة لضبط مكان السهم */
+    position: relative;
     background-color: #1e1e1e;
     padding: 20px;
     border-radius: 15px;
     box-shadow: 0 0 20px rgba(0, 255, 128, 0.2);
     text-align: center;
-    width: 450px;
+   width: 95%; /* يضمن أن المربع سيأخذ 95% من شاشة الموبايل فقط */
+    max-width: 650px; /* كبرنا هذا الرقم (كان 450) ليتسع للكانفاس الجديد على الكمبيوتر */
 }
 
 .screen {
@@ -83,7 +84,7 @@ button:hover {
 .score-board {
     display: flex;
     justify-content: space-between;
-    width: 400px;
+    width: 100%; /* عشان ياخد عرض الشاشة المتاح */
     margin-bottom: 10px;
     font-weight: bold;
     font-size: 18px;
@@ -94,6 +95,10 @@ canvas {
     border: 2px solid #333;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    touch-action: none;
+    max-width: 100%; /* عشان يصغر مع حجم الموبايل */
+    height: auto; /* يحافظ على نسبة الطول للعرض */
+    aspect-ratio: 1 / 1; /* يضمن إن اللعبة تفضل مربع متساوي */
 }
 
 .leaderboard {
