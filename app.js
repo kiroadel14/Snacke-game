@@ -29,13 +29,17 @@ const auth = getAuth(app);
 // --- 2. متغيرات اللعبة و UI ---
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
-const gridSize = 25;
+const gridSize = 28;
 const tileCount = canvas.width / gridSize;
 
 let snake = [];
 let velocity = { x: 1, y: 0 };
 let food = { x: 10, y: 10 };
 let bonusFood = null;
+let bonusTimeout;
+let blinkTimeout;
+let blinkInterval;
+let showBonusBlink = true; // عشان نتحكم البونص ظاهر ولا مخفي وقت الوميض
 let score = 0;
 let currentSpeed = 130; 
 let changingDirection = false;
@@ -363,7 +367,25 @@ function placeFood() {
 
 function placeBonusFood() {
     bonusFood = { x: Math.floor(Math.random() * tileCount), y: Math.floor(Math.random() * tileCount) };
-    setTimeout(() => { bonusFood = null; }, 7000); 
+    showBonusBlink = true;
+
+    // تنظيف أي تايمر قديم عشان ميحصلش تداخل لو ظهر بونص جديد
+    clearTimeout(bonusTimeout);
+    clearTimeout(blinkTimeout);
+    clearInterval(blinkInterval);
+
+    // بعد 4 ثواني، يبدأ ينور ويطفي
+    blinkTimeout = setTimeout(() => {
+        blinkInterval = setInterval(() => {
+            showBonusBlink = !showBonusBlink; // يعكس الحالة (يظهر ويختفي)
+        }, 300); // سرعة الوميض
+    }, 4000);
+
+    // بعد 7 ثواني (الإجمالي)، يختفي تماماً
+    bonusTimeout = setTimeout(() => {
+        bonusFood = null;
+        clearInterval(blinkInterval); // نوقف الوميض
+    }, 7000);
 }
 // دالة تشغيل وإيقاف اللعبة
 function togglePause() {
@@ -461,11 +483,15 @@ async function fetchLeaderboard() {
     }
 }
 // --- 6. نظام التحكم للموبايل (Swipe Controls) ---
+// --- 6. نظام التحكم للموبايل (Swipe Controls) ---
+// 1. ربطنا مربع التحكم الجديد بالـ JavaScript
+const swipeController = document.getElementById("swipe-controller"); 
+
 let touchStartX = 0;
 let touchStartY = 0;
 
-// تسجيل مكان لمس الشاشة لأول مرة
-canvas.addEventListener("touchstart", function(e) {
+// 2. غيرنا canvas بـ swipeController في الـ 3 دوال الجاية
+swipeController.addEventListener("touchstart", function(e) {
     touchStartX = e.changedTouches[0].screenX;
     touchStartY = e.changedTouches[0].screenY;
     
@@ -476,14 +502,14 @@ canvas.addEventListener("touchstart", function(e) {
 }, { passive: false });
 
 // منع السكرول أثناء السحب
-canvas.addEventListener("touchmove", function(e) {
+swipeController.addEventListener("touchmove", function(e) {
     if (!isPaused) {
         e.preventDefault();
     }
 }, { passive: false });
 
 // تحديد الاتجاه عند رفع الأصبع من على الشاشة
-canvas.addEventListener("touchend", function(e) {
+swipeController.addEventListener("touchend", function(e) {
     if (isPaused) return; // لا تفعل شيئاً إذا كانت اللعبة متوقفة
 
     let touchEndX = e.changedTouches[0].screenX;
@@ -493,27 +519,28 @@ canvas.addEventListener("touchend", function(e) {
 });
 
 function handleSwipe(startX, startY, endX, endY) {
-    if (changingDirection) return; // منع تغيير الاتجاه مرتين في نفس اللحظة
-
+    // 3. تم إيقاف سطر changingDirection لأنه كان يسبب توقف اللمس (Error)
+    // إذا أردت تشغيله يجب تعريفه فوق في المتغيرات وتصفيره في دالة update
+    
     let diffX = endX - startX;
     let diffY = endY - startY;
 
-    // قللنا الرقم من 30 لـ 15 عشان اللمس يكون حساس وسريع جداً
+    // الرقم 15 ممتاز للمس حساس وسريع جداً
     if (Math.abs(diffX) < 15 && Math.abs(diffY) < 15) return;
 
     if (Math.abs(diffX) > Math.abs(diffY)) {
         // سحب أفقي (يمين أو يسار)
         if (diffX > 0 && velocity.x !== -1) { 
-            velocity = { x: 1, y: 0 }; changingDirection = true;
+            velocity = { x: 1, y: 0 }; 
         } else if (diffX < 0 && velocity.x !== 1) { 
-            velocity = { x: -1, y: 0 }; changingDirection = true;
+            velocity = { x: -1, y: 0 }; 
         }
     } else {
         // سحب عمودي (فوق أو تحت)
         if (diffY > 0 && velocity.y !== -1) { 
-            velocity = { x: 0, y: 1 }; changingDirection = true;
+            velocity = { x: 0, y: 1 }; 
         } else if (diffY < 0 && velocity.y !== 1) { 
-            velocity = { x: 0, y: -1 }; changingDirection = true;
+            velocity = { x: 0, y: -1 }; 
         }
     }
 }
