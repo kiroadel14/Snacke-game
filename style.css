@@ -22,10 +22,10 @@ body {
     border-radius: 15px;
     box-shadow: 0 0 20px rgba(0, 255, 128, 0.2);
     text-align: center;
-  width: 95%; 
-    max-width: 950px; /* خليها 750 عشان تبقى أكبر من اللعبة بحاجة بسيطة */
+    
+    width: 98%; 
+    max-width: 1050px; /* كبرناه لـ 1050 عشان يستوعب اللعبة الجديدة على الكمبيوتر */
 }
-
 .screen {
     display: flex;
     flex-direction: column;

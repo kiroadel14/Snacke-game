@@ -29,7 +29,7 @@ const auth = getAuth(app);
 // --- 2. متغيرات اللعبة و UI ---
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
-const gridSize = 30;
+const gridSize = 40;
 const tileCount = Math.floor(canvas.width / gridSize); // <--- إضافة Math.floor هنا تمنع المشكلة دي نهائياً
 
 let snake = [];
