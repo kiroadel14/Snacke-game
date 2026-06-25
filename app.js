@@ -30,7 +30,7 @@ const auth = getAuth(app);
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 const gridSize = 30;
-const tileCount = canvas.width / gridSize;
+const tileCount = Math.floor(canvas.width / gridSize); // <--- إضافة Math.floor هنا تمنع المشكلة دي نهائياً
 
 let snake = [];
 let velocity = { x: 1, y: 0 };
@@ -216,6 +216,10 @@ function resetGame() {
     isPaused = false;
     pauseOverlay.classList.add("hidden");
     pauseBtn.textContent = "⏸️ إيقاف"; 
+    // ضف السطور دي جوه دالة resetGame
+    clearTimeout(bonusTimeout);
+    clearTimeout(blinkTimeout);
+    clearInterval(blinkInterval);
 }
 
 function gameLoop() {
@@ -267,9 +271,15 @@ function update() {
         score += 3;
         document.getElementById("score").textContent = score;
         bonusFood = null;
+        
+        // إيقاف التايمرات والوميض لأن الثعبان أكله خلاص
+        clearTimeout(bonusTimeout);
+        clearTimeout(blinkTimeout);
+        clearInterval(blinkInterval);
+
         snake.push({...snake[snake.length - 1]});
         snake.push({...snake[snake.length - 1]});
-    } 
+    }
     // 3. حذف الذيل لو الثعبان مأكلش
     else {
         snake.pop(); 
@@ -291,7 +301,8 @@ function draw() {
     ctx.arc(foodCenterX - 3, foodCenterY - 3, 3, 0, 2 * Math.PI);
     ctx.fill();
 
-    if (bonusFood) {
+   // 2. رسم طعام البونص (الذهبي)
+    if (bonusFood && showBonusBlink) { // <--- ضفنا الشرط هنا
         let bonusX = bonusFood.x * gridSize + gridSize / 2;
         let bonusY = bonusFood.y * gridSize + gridSize / 2;
         
@@ -519,28 +530,27 @@ swipeController.addEventListener("touchend", function(e) {
 });
 
 function handleSwipe(startX, startY, endX, endY) {
-    // 3. تم إيقاف سطر changingDirection لأنه كان يسبب توقف اللمس (Error)
-    // إذا أردت تشغيله يجب تعريفه فوق في المتغيرات وتصفيره في دالة update
+    // الآن يمكننا تشغيل الحماية لأنك قمت بتعريف المتغير في الأعلى
+    if (changingDirection) return; 
     
     let diffX = endX - startX;
     let diffY = endY - startY;
 
-    // الرقم 15 ممتاز للمس حساس وسريع جداً
     if (Math.abs(diffX) < 15 && Math.abs(diffY) < 15) return;
 
     if (Math.abs(diffX) > Math.abs(diffY)) {
-        // سحب أفقي (يمين أو يسار)
+        // سحب أفقي
         if (diffX > 0 && velocity.x !== -1) { 
-            velocity = { x: 1, y: 0 }; 
+            velocity = { x: 1, y: 0 }; changingDirection = true;
         } else if (diffX < 0 && velocity.x !== 1) { 
-            velocity = { x: -1, y: 0 }; 
+            velocity = { x: -1, y: 0 }; changingDirection = true;
         }
     } else {
-        // سحب عمودي (فوق أو تحت)
+        // سحب عمودي
         if (diffY > 0 && velocity.y !== -1) { 
-            velocity = { x: 0, y: 1 }; 
+            velocity = { x: 0, y: 1 }; changingDirection = true;
         } else if (diffY < 0 && velocity.y !== 1) { 
-            velocity = { x: 0, y: -1 }; 
+            velocity = { x: 0, y: -1 }; changingDirection = true;
         }
     }
 }

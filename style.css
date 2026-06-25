@@ -23,7 +23,7 @@ body {
     box-shadow: 0 0 20px rgba(0, 255, 128, 0.2);
     text-align: center;
   width: 95%; 
-    max-width: 750px; /* خليها 750 عشان تبقى أكبر من اللعبة بحاجة بسيطة */
+    max-width: 950px; /* خليها 750 عشان تبقى أكبر من اللعبة بحاجة بسيطة */
 }
 
 .screen {
